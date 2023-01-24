@@ -1,39 +1,21 @@
 'use strict';
 const { By, Key, until } = require("selenium-webdriver");
+const BasePage = require("./base.page");
 
-module.exports = class HomePage {
+module.exports = class HomePage extends BasePage {
     #driver;
 
     constructor(webdriver) {
+        super(webdriver);
         this.#driver = webdriver;
     }
 
-    goToPage() {
-        this.#driver.get("http://shop.qa.rs/");
-    }
-
-    getPageHeaderTitle() {
-        return this.#driver.findElement(By.css('h1')).getText();
-    }
-
     getWelcomeBackTitle() {
-        return this.#driver.findElement(By.css('h2')).getText();
+        return this.#driver.findElement(By.css('h2'));
     }    
 
-    isBugListDivDisplayed() {
-        return this.#driver.findElement(
-            By.xpath(
-                '//*[@class="row" and contains(., "ORDER YOUR BUGS TODAY")]'
-            )
-        ).isDisplayed();
-    }
-
-    isLogoutLinkDisplayed() {
-        return this.#driver.findElement(By.partialLinkText('Logout')).isDisplayed();
-    }
-
-    isLoginLinkDisplayed() {
-        return this.#driver.findElement(By.linkText('Login')).isDisplayed();
+    getBugListDiv() {
+        return this.#driver.findElement(By.xpath('//*[@class="row" and contains(., "ORDER YOUR BUGS TODAY")]'));
     }
 
     async clickOnRegisterLink() {
@@ -42,12 +24,7 @@ module.exports = class HomePage {
     }
 
     getSuccesssAlertText() {
-        return this.#driver.findElement(By.className('alert alert-success')).getText();
-    }
-
-    async clickOnLoginLink() {
-        const loginLink = await this.#driver.findElement(By.linkText('Login'));
-        await loginLink.click();
+        return this.#driver.findElement(By.className('alert alert-success'));
     }
 
     getPackageDiv(title) {

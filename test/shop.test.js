@@ -9,6 +9,7 @@ const LoginPage = require("../pages/login.page");
 const CartPage = require("../pages/cart.page");
 const CheckoutPage = require("../pages/checkout.page");
 const HistoryPage = require("../pages/history.page");
+const BasePage = require("../pages/base.page");
 
 describe("shop.QA.rs tests", function() {
     let driver;
@@ -18,14 +19,15 @@ describe("shop.QA.rs tests", function() {
     let pageCart;
     let pageCheckout;
     let pageHistory;
+    let pageBase;
 
     const browsers = {
         chrome: 'chrome',
         microsoftEdge: 'MicrosoftEdge',
     };
 
-    const packageToAdd = 'starter';
-    const packageQuantity = '2';
+    const packageToAdd = 'pro';
+    const packageQuantity = '3';
 
     before(async function() {
         driver = await new Builder().forBrowser(browsers.chrome).build();
@@ -36,6 +38,7 @@ describe("shop.QA.rs tests", function() {
         pageCart = new CartPage(driver);
         pageCheckout = new CheckoutPage(driver);
         pageHistory = new HistoryPage(driver);
+        pageBase = new BasePage(driver);
     });
 
     after(async function() {
@@ -43,15 +46,16 @@ describe("shop.QA.rs tests", function() {
     });
 
     it("Verify homepage is open", async function() {
-        await pageHomepage.goToPage();
+        await pageHomepage.goToPage("http://shop.qa.rs/");
         const pageTitle = await pageHomepage.getPageHeaderTitle();
-        expect(pageTitle).to.contain("(QA) Shop");
-        expect(await pageHomepage.isBugListDivDisplayed()).to.be.true;
+        expect(await pageTitle.getText()).to.contain("(QA) Shop");
+        expect(await pageHomepage.getBugListDiv().isDisplayed()).to.be.true;
     });
 
     it("Goes to registration page", async function() {
         await pageHomepage.clickOnRegisterLink();
-        expect(await pageRegister.getRegisterButtonValue()).to.contain('Register');
+        const registerButton = await pageRegister.getRegisterButton();
+        expect(await registerButton.isDisplayed()).to.be.true;
     });
 
     it('Successfuly performs registration', async function() {
@@ -63,18 +67,22 @@ describe("shop.QA.rs tests", function() {
         await pageRegister.getInputPasswordConfirmation().sendKeys('nekaLozinka123');
         await pageRegister.getRegisterButton().click();
 
-        expect(await pageHomepage.getSuccesssAlertText()).to.contain('Uspeh!');
+        const successText = await pageHomepage.getSuccesssAlertText();
+
+        expect(await successText.getText()).to.contain('Uspeh!');
     });
 
     it('Goes to login page', async function() {
-        await pageLogin.goToPage();
+        await pageLogin.goToPage("http://shop.qa.rs/login");
         
         await pageLogin.getInputUsername().sendKeys('aaa');
         await pageLogin.getInputPassword().sendKeys('aaa');
         await pageLogin.clickOnLoginButton();
         
-        expect(await pageHomepage.getWelcomeBackTitle()).to.contain('Welcome back,');
-        expect(await pageHomepage.isLogoutLinkDisplayed()).to.be.true;
+        const welcomeBackTitle = await pageHomepage.getWelcomeBackTitle();
+
+        expect(await welcomeBackTitle.getText()).to.contain('Welcome back,');
+        expect(await pageHomepage.getLogoutLink().isDisplayed()).to.be.true;
     });
 
     it("Adds item to cart - Starter, 2 items", async function() {
@@ -93,7 +101,7 @@ describe("shop.QA.rs tests", function() {
                 const buttonOrder = await pageHomepage.getOrderButton(packageDiv);
                 await buttonOrder.click();
 
-                expect(await driver.getCurrentUrl()).to.contain('http://shop.qa.rs/order');
+                expect(await pageBase.getCurrentUrl()).to.eql('http://shop.qa.rs/order');
             }
         }));
     });
@@ -101,15 +109,17 @@ describe("shop.QA.rs tests", function() {
     it("Opens shopping cart", async function() {
         await pageHomepage.clickOnViewShoppingCartLink();
 
-        expect(await driver.getCurrentUrl()).to.contain('http://shop.qa.rs/cart');
-        expect(await pageCart.getPageHeaderTitle()).to.contain('Order');
+        expect(await pageBase.getCurrentUrl()).to.eql('http://shop.qa.rs/cart');
+
+        const headerTitle = await pageCart.getPageHeaderTitle();
+        expect(await headerTitle.getText()).to.contain('Order');
     });
 
     it("Verifies items are in cart - Starter, 2 items", async function() {
         const orderRow = await pageCart.getOrderRow(packageToAdd.toUpperCase());
         const itemQuantity = await pageCart.getItemQuantity(orderRow);
 
-        expect(await itemQuantity.getText()).to.eq(packageQuantity);
+        expect(await itemQuantity.getText()).to.eql(packageQuantity);
     });
 
     it("Verifies total item price is correct", async function() {
@@ -124,33 +134,39 @@ describe("shop.QA.rs tests", function() {
 
         const calculatedItemPriceTotal = qntty * price;
         
-        expect(calculatedItemPriceTotal).to.be.eq(total);
+        expect(calculatedItemPriceTotal).to.be.eql(total);
         
     });
 
     it("Performs checkout", async function() {
         await pageCart.clickOnCheckoutButton();
 
-        expect(await pageCheckout.getCheckoutSuccessTitle()).to.contain('(Order #');
+        const checkoutSuccessTitle = await pageCheckout.getCheckoutSuccessTitle();
+        expect(await checkoutSuccessTitle.getText()).to.contain('(Order #');
     });
 
     it("Verifies checkout success", async function() {
-        const orderNumber = await pageCheckout.getCheckoutOrderNumber();
+        const orderNumber = (await pageCheckout.getCheckoutSuccessTitle().getText()).replace(/\D/g, '');
 
         await pageCheckout.clickOnGetOrderHistoryLink();
 
-        expect(await pageHistory.getPageHeaderTitle()).to.contain('Order History');
+        const pageHeaderTitle = await pageCheckout.getPageHeaderTitle();
+        expect(await pageHeaderTitle.getText()).to.contain('Order History');
 
         const historyRow = await pageHistory.getHistoryRow(orderNumber);
-        const historyStatus = await pageHistory.getHistoryStatus(historyRow).getText();
+        const historyStatus = await pageHistory.getHistoryStatus(historyRow);
 
-        expect(historyStatus).to.be.eq('Ordered');
+        expect(await historyStatus.getText()).to.be.eql('Ordered');
     });
 
     it("Performs logout", async function() {
-        await pageHistory.clickOnLogoutLink();
+        await pageHistory.getLogoutLink().click();
 
-        expect(await pageHomepage.isLoginLinkDisplayed()).to.be.true;
+        const loginLink = await pageHomepage.getLoginLink();
+        expect(await loginLink.isDisplayed()).to.be.true;
     });
 
 });
+
+    
+    

@@ -8,25 +8,28 @@ module.exports = class BasePage {
         this.#driver = webdriver;
     }
 
+    goToPage(url){
+        return this.#driver.get(url);    
+    }
+
+    getCurrentUrl(){
+        return this.#driver.getCurrentUrl();
+    }
+
     async clickOnGetOrderHistoryLink() {
         const orderHistoryLink = await this.#driver.findElement(By.linkText('Order history'));
         await orderHistoryLink.click();
     }
 
+    getLogoutLink() {
+        return this.#driver.findElement(By.partialLinkText('Logout'));
+    }
+
+    getLoginLink() {
+        return this.#driver.findElement(By.linkText('Login'));
+    }
+
     getPageHeaderTitle() {
-        return this.#driver.findElement(By.css('h1')).getText();
+        return this.#driver.findElement(By.css('h1'));
     }
-
-    async clickOnLogoutLink() {
-/*
-Possible xpaths for this element:
-1.  //ul[contains(@class, "nav")]/li[3]/a
-2.  //ul[contains(@class, "nav")]/li[contains(., "Logout")]/a
-3.  //ul[contains(@class, "nav")]/li/a[contains(text(), "Logout")]
-4.  //ul[contains(@class, "nav")]/li/a[contains(@href, "logout")]
-*/        
-        const logoutLink = await this.#driver.findElement(By.partialLinkText('Logout'));
-        await logoutLink.click();        
-    }
-
 }

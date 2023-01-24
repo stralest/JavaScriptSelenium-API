@@ -1,15 +1,13 @@
 'use strict';
 const { By, Key, until } = require("selenium-webdriver");
+const BasePage = require("./base.page");
 
-module.exports = class LoginPage {
+module.exports = class LoginPage extends BasePage {
     #driver;
 
     constructor(webdriver) {
+        super(webdriver);
         this.#driver = webdriver;
-    }
-
-    goToPage() {
-        this.#driver.get("http://shop.qa.rs/login");
     }
 
     getInputUsername() {

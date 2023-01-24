@@ -1,19 +1,17 @@
 'use strict';
 const { By, Key, until } = require("selenium-webdriver");
+const BasePage = require("./base.page");
 
-module.exports = class CartPage {
+module.exports = class CartPage extends BasePage{
     #driver;
 
     constructor(webdriver) {
+        super(webdriver);
         this.#driver = webdriver;
     }
 
-    goToPage() {
-        this.#driver.get("http://shop.qa.rs/cart");
-    }
-
     getPageHeaderTitle() {
-        return this.#driver.findElement(By.css('h1')).getText();
+        return this.#driver.findElement(By.css('h1'));
     }
 
     getCartTable() {
@@ -38,7 +36,7 @@ module.exports = class CartPage {
     }
 
     async clickOnCheckoutButton() {
-        const btn = await this.#driver.findElement(By.name('checkout'));
-        await btn.click();
+        const checkoutButton = await this.#driver.findElement(By.name('checkout'));
+        await checkoutButton.click();
     }
 }

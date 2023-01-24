@@ -9,11 +9,6 @@ module.exports = class HistoryPage extends BasePage {
         super(webdriver);
         this.#driver = webdriver;
     }
-
-    goToPage() {
-        this.#driver.get("http://shop.qa.rs/history");
-    }
-
     getHistoryTable() {
         return this.#driver.findElement(By.css('table'));
     }
@@ -26,5 +21,4 @@ module.exports = class HistoryPage extends BasePage {
     getHistoryStatus(orderRow) {
         return orderRow.findElement(By.className('status'));
     }
-
 }

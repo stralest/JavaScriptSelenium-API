@@ -9,16 +9,7 @@ module.exports = class CheckoutPage extends BasePage {
         super(webdriver);
         this.#driver = webdriver;
     }
-
-    goToPage() {
-        this.#driver.get("http://shop.qa.rs/checkout");
-    }
-
     getCheckoutSuccessTitle() {
-        return this.#driver.findElement(By.css('h2')).getText();
-    }
-
-    async getCheckoutOrderNumber() {
-        return (await this.getCheckoutSuccessTitle()).replace(/\D/g, '');
+        return this.#driver.findElement(By.css('h2'));
     }
 }
