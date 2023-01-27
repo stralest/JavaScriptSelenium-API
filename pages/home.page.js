@@ -8,23 +8,27 @@ module.exports = class HomePage extends BasePage {
     constructor(webdriver) {
         super(webdriver);
         this.#driver = webdriver;
-    }
+    } 
 
-    getWelcomeBackTitle() {
-        return this.#driver.findElement(By.css('h2'));
-    }    
+    bugList = By.xpath('//*[@class="row" and contains(., "ORDER YOUR BUGS TODAY")]');
+    registerLink = By.linkText('Register');
+    alertText = By.className('alert alert-success');
+    quantityDropDown = By.name('quantity');
+    quantityOption = By.css('option');
+    orderButton = By.className('btn btn-primary');
+    shoppingCart = By.partialLinkText('shopping cart');
 
     getBugListDiv() {
-        return this.#driver.findElement(By.xpath('//*[@class="row" and contains(., "ORDER YOUR BUGS TODAY")]'));
+        return this.#driver.findElement(this.bugList);
     }
 
     async clickOnRegisterLink() {
-        const registerLink = await this.#driver.findElement(By.linkText('Register'));
+        const registerLink = await this.#driver.findElement(this.registerLink);
         await registerLink.click();
     }
 
     getSuccesssAlertText() {
-        return this.#driver.findElement(By.className('alert alert-success'));
+        return this.#driver.findElement(this.alertText);
     }
 
     getPackageDiv(title) {
@@ -33,19 +37,19 @@ module.exports = class HomePage extends BasePage {
     }
 
     getQuantityDropdown(packageDiv) {
-        return packageDiv.findElement(By.name('quantity'))
+        return packageDiv.findElement(this.quantityDropDown)
     }
 
     getQuantityOptions(quantityDropdown) {
-        return quantityDropdown.findElements(By.css('option'));
+        return quantityDropdown.findElements(this.quantityOption);
     }
 
     getOrderButton(packageDiv) {
-        return packageDiv.findElement(By.className('btn btn-primary'));
+        return packageDiv.findElement(this.orderButton);
     }
 
     async clickOnViewShoppingCartLink() {
-        const linkShoppingCart = await this.#driver.findElement(By.partialLinkText('shopping cart'));
+        const linkShoppingCart = await this.#driver.findElement(this.shoppingCart);
         await linkShoppingCart.click();
     }
 }

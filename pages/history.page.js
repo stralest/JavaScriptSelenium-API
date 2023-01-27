@@ -9,16 +9,15 @@ module.exports = class HistoryPage extends BasePage {
         super(webdriver);
         this.#driver = webdriver;
     }
-    getHistoryTable() {
-        return this.#driver.findElement(By.css('table'));
-    }
 
+    historyStatus = By.className('status');
+    
     getHistoryRow(orderNum) {
         const xpathHistoryRow = `//td[contains(., "#${orderNum}")]/parent::tr`;
-        return this.getHistoryTable().findElement(By.xpath(xpathHistoryRow));
+        return this.getTable().findElement(By.xpath(xpathHistoryRow));
     }
 
     getHistoryStatus(orderRow) {
-        return orderRow.findElement(By.className('status'));
+        return orderRow.findElement(this.historyStatus);
     }
 }

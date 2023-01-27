@@ -9,7 +9,11 @@ module.exports = class CheckoutPage extends BasePage {
         super(webdriver);
         this.#driver = webdriver;
     }
-    getCheckoutSuccessTitle() {
-        return this.#driver.findElement(By.css('h2'));
-    }
+
+    goBackToSite = By.linkText("Go back to the site.");
+
+    async clickOnGoBackToSiteButton(){
+        const btn = await this.#driver.findElement(this.goBackToSite);
+        await btn.click();
+    } 
 }

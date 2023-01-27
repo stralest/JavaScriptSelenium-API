@@ -10,16 +10,20 @@ module.exports = class LoginPage extends BasePage {
         this.#driver = webdriver;
     }
 
+    usernameField = By.name('username');
+    passwordField = By.name('password');
+    loginButton = By.name('login');
+
     getInputUsername() {
-        return this.#driver.findElement(By.name('username'));
+        return this.#driver.findElement(this.usernameField);
     }
     
     getInputPassword() {
-        return this.#driver.findElement(By.name('password'));
+        return this.#driver.findElement(this.passwordField);
     }
 
     async clickOnLoginButton() {
-         const buttonLogin = await this.#driver.findElement(By.name('login'));
+         const buttonLogin = await this.#driver.findElement(this.loginButton);
          await buttonLogin.click();
     }
 }

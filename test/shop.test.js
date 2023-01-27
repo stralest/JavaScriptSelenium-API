@@ -47,7 +47,7 @@ describe("shop.QA.rs tests", function() {
 
     it("Verify homepage is open", async function() {
         await pageHomepage.goToPage("http://shop.qa.rs/");
-        const pageTitle = await pageHomepage.getPageHeaderTitle();
+        const pageTitle = await pageHomepage.getH1();
         expect(await pageTitle.getText()).to.contain("(QA) Shop");
         expect(await pageHomepage.getBugListDiv().isDisplayed()).to.be.true;
     });
@@ -59,12 +59,12 @@ describe("shop.QA.rs tests", function() {
     });
 
     it('Successfuly performs registration', async function() {
-        await pageRegister.getInputFirstname().sendKeys('Bob');
-        await pageRegister.getInputLastname().sendKeys('Buttons');
-        await pageRegister.getInputEmail().sendKeys('bob.buttons@example.local');
-        await pageRegister.getInputUsername().sendKeys('bob.buttons');
-        await pageRegister.getInputPassword().sendKeys('nekaLozinka123');
-        await pageRegister.getInputPasswordConfirmation().sendKeys('nekaLozinka123');
+        await pageRegister.getFirstnameField();
+        await pageRegister.getLastnameField();
+        await pageRegister.getEmailField();
+        await pageRegister.getUsernameField();
+        await pageRegister.getPasswordField();
+        await pageRegister.getPasswordConformationField();
         await pageRegister.getRegisterButton().click();
 
         const successText = await pageHomepage.getSuccesssAlertText();
@@ -79,7 +79,7 @@ describe("shop.QA.rs tests", function() {
         await pageLogin.getInputPassword().sendKeys('aaa');
         await pageLogin.clickOnLoginButton();
         
-        const welcomeBackTitle = await pageHomepage.getWelcomeBackTitle();
+        const welcomeBackTitle = await pageHomepage.getH2();
 
         expect(await welcomeBackTitle.getText()).to.contain('Welcome back,');
         expect(await pageHomepage.getLogoutLink().isDisplayed()).to.be.true;
@@ -111,7 +111,7 @@ describe("shop.QA.rs tests", function() {
 
         expect(await pageBase.getCurrentUrl()).to.eql('http://shop.qa.rs/cart');
 
-        const headerTitle = await pageCart.getPageHeaderTitle();
+        const headerTitle = await pageCart.getH1();
         expect(await headerTitle.getText()).to.contain('Order');
     });
 
@@ -125,7 +125,7 @@ describe("shop.QA.rs tests", function() {
     it("Verifies total item price is correct", async function() {
         const orderRow = await pageCart.getOrderRow(packageToAdd.toUpperCase());
         const itemQuantity = await pageCart.getItemQuantity(orderRow);
-        const itemPrice = await pageCart.getItemPrice(orderRow);
+        const itemPrice = await pageCart.getItemPricePerItem(orderRow);
         const itemPriceTotal = await pageCart.getItemPriceTotal(orderRow);
 
         const qntty = Number(await itemQuantity.getText());
@@ -141,16 +141,18 @@ describe("shop.QA.rs tests", function() {
     it("Performs checkout", async function() {
         await pageCart.clickOnCheckoutButton();
 
-        const checkoutSuccessTitle = await pageCheckout.getCheckoutSuccessTitle();
+        const checkoutSuccessTitle = await pageCheckout.getH2();
         expect(await checkoutSuccessTitle.getText()).to.contain('(Order #');
     });
 
     it("Verifies checkout success", async function() {
-        const orderNumber = (await pageCheckout.getCheckoutSuccessTitle().getText()).replace(/\D/g, '');
+        const orderNumber = (await pageCheckout.getH2().getText()).replace(/\D/g, '');
+
+        await pageCheckout.clickOnGoBackToSiteButton();
 
         await pageCheckout.clickOnGetOrderHistoryLink();
 
-        const pageHeaderTitle = await pageCheckout.getPageHeaderTitle();
+        const pageHeaderTitle = await pageCheckout.getH1();
         expect(await pageHeaderTitle.getText()).to.contain('Order History');
 
         const historyRow = await pageHistory.getHistoryRow(orderNumber);
