@@ -1,4 +1,4 @@
-require("selenium-webdriver/chrome");
+require('chromedriver');
 require('selenium-webdriver/edge');
 
 const { Builder, By, Key, until } = require("selenium-webdriver");
@@ -30,7 +30,7 @@ describe("shop.QA.rs tests", function() {
     const packageQuantity = '3';
 
     before(async function() {
-        driver = await new Builder().forBrowser(browsers.chrome).build();
+        driver = await new Builder().forBrowser(browsers.microsoftEdge).build();
         await driver.manage().window().maximize();
         pageHomepage = new HomePage(driver);
         pageRegister = new RegisterPage(driver);
